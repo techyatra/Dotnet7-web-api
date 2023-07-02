@@ -64,8 +64,6 @@ namespace TechYatraAPI.Service
            var updatedData =  _toDoContext.Update(todo);
             _toDoContext.SaveChanges();
             return updatedData.Entity;
-
-
         }
     }
 }
