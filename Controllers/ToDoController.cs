@@ -11,15 +11,20 @@ namespace TechYatraAPI.Controllers
     public class ToDoController : ControllerBase
     {
         private readonly IToDoService _service;
-        public ToDoController(IToDoService service)
+        private readonly IGenericRepository<ToDo> _toDoService;
+        public ToDoController(IToDoService service,
+  
+            IGenericRepository<ToDo> toDoService
+            )
         {
             _service = service;
+            _toDoService = toDoService;
         }
         // GET: api/<ToDoController>
         [HttpGet]
         public List<ToDo> Get()
         {
-            var tasks = _service.GetAllTasks();
+            var tasks = _toDoService.GetAll();
             return tasks;
         }
 
@@ -27,7 +32,7 @@ namespace TechYatraAPI.Controllers
         [HttpGet("{id}")]
         public ToDo Get(int id)
         {
-            var result = _service.ToDoGetTaskById(id);
+            var result = _toDoService.GetById(id);
             return result;
         }
 
@@ -35,7 +40,7 @@ namespace TechYatraAPI.Controllers
         [HttpPost]
         public ToDo Post([FromBody] ToDo todo)
         {
-            var task = _service.AddTask(todo);
+            var task = _toDoService.Add(todo);
             return task;
         }
 
@@ -47,7 +52,7 @@ namespace TechYatraAPI.Controllers
             {
                 throw new Exception("Please enter the valid details");
             }
-            var result = _service.UpdateTask(value);
+            var result = _toDoService.Update(value, id);
             return result;
 
 
@@ -57,7 +62,7 @@ namespace TechYatraAPI.Controllers
         [HttpDelete("{id}")]
         public bool Delete(int id)
         {
-            bool result = _service.DeleteTaskById(id);
+            bool result = _toDoService.Delete(id);
             return result;
         }
     }
