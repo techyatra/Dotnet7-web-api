@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TechYatraAPI.Interface;
 using TechYatraAPI.Model;
+using TechYatraAPI.Unit_Of_Work;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,10 +12,12 @@ namespace TechYatraAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IGenericRepository<User> _userService;
-        public UserController(IGenericRepository<User> userService
+        private readonly IUnitOfWork _unitOfWork;
+        public UserController(IGenericRepository<User> userService, IUnitOfWork unitOfWork
             )
         {
             _userService = userService;
+            _unitOfWork = unitOfWork;
         }
         // GET: api/<UserController>
         [HttpGet]
@@ -35,7 +38,9 @@ namespace TechYatraAPI.Controllers
         [HttpPost]
         public User Post([FromBody] User obj)
         {
-            var user = _userService.Add(obj);
+            var user = _unitOfWork.Users.Add(obj);
+            _unitOfWork.Save();
+            //var user = _userService.Add(obj);
             return user;
         }
 

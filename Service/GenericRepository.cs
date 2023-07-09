@@ -7,7 +7,7 @@ namespace TechYatraAPI.Service
     public class GenericRepository<T>: IGenericRepository<T> where T : class
     {
         private readonly ToDoContext _toDoContext;
-        private DbSet<T> table = null;
+        internal DbSet<T> table = null;
         public GenericRepository(ToDoContext toDoContext)
         {
             _toDoContext = toDoContext;
@@ -16,7 +16,7 @@ namespace TechYatraAPI.Service
         public T Add(T obj)
         {
             var result = table.Add(obj);
-            _toDoContext.SaveChanges();
+            //_toDoContext.SaveChanges();
             return result.Entity;
 
         }
@@ -31,7 +31,7 @@ namespace TechYatraAPI.Service
             try
             {
                 _toDoContext.Remove(result);
-                _toDoContext.SaveChanges();
+                //_toDoContext.SaveChanges();
                 return true;
             }
             catch
@@ -57,7 +57,7 @@ namespace TechYatraAPI.Service
         public T Update(T obj, int id)
         {
             var updatedData = _toDoContext.Update(obj);
-            _toDoContext.SaveChanges();
+            //_toDoContext.SaveChanges();
             return updatedData.Entity;
         }
 
