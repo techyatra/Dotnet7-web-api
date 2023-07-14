@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sieve.Models;
+using Sieve.Services;
 using TechYatraAPI.Interface;
 using TechYatraAPI.Model;
 
@@ -12,20 +14,23 @@ namespace TechYatraAPI.Controllers
     {
         private readonly IToDoService _service;
         private readonly IGenericRepository<ToDo> _toDoService;
+        private readonly SieveProcessor _sieveProcessor;
         public ToDoController(IToDoService service,
   
-            IGenericRepository<ToDo> toDoService
+            IGenericRepository<ToDo> toDoService, SieveProcessor sieveProcessor
             )
         {
             _service = service;
             _toDoService = toDoService;
+            _sieveProcessor = sieveProcessor;
         }
         // GET: api/<ToDoController>
         [HttpGet]
-        public List<ToDo> Get()
+        public List<ToDo> Get([FromQuery] SieveModel model)
         {
-            var tasks = _toDoService.GetAll();
-            return tasks;
+            var tasks = _toDoService.GetAll().AsQueryable();
+            tasks = _sieveProcessor.Apply(model, tasks);
+              return tasks.ToList();
         }
 
         // GET api/<ToDoController>/5

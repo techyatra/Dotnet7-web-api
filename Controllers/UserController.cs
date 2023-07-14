@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sieve.Models;
+using Sieve.Services;
 using TechYatraAPI.Interface;
 using TechYatraAPI.Model;
 using TechYatraAPI.Unit_Of_Work;
@@ -13,18 +15,22 @@ namespace TechYatraAPI.Controllers
     {
         private readonly IGenericRepository<User> _userService;
         private readonly IUnitOfWork _unitOfWork;
-        public UserController(IGenericRepository<User> userService, IUnitOfWork unitOfWork
+        private readonly SieveProcessor _sieveProcessor;
+        public UserController(IGenericRepository<User> userService, IUnitOfWork unitOfWork,
+            SieveProcessor sieveProcessor
             )
         {
             _userService = userService;
             _unitOfWork = unitOfWork;
+            _sieveProcessor = sieveProcessor;
         }
         // GET: api/<UserController>
         [HttpGet]
-        public List<User> Get()
+        public List<User> Get([FromQuery] SieveModel model)
         {
-            var users = _userService.GetAll();
-            return users;
+            var users = _userService.GetAll().AsQueryable();
+            users = _sieveProcessor.Apply(model, users);
+            return users.ToList();
         }
         // GET api/<UserController>/5
         [HttpGet("{id}")]

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sieve.Services;
 using TechYatraAPI.Context;
 using TechYatraAPI.Interface;
 using TechYatraAPI.Service;
@@ -11,14 +12,13 @@ builder.Services.AddDbContext<ToDoContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
-
-
 builder.Services.AddControllers();
 builder.Services.AddScoped<IToDoService, ToDoService>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IToDoRepository, ToDoRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<SieveProcessor>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
