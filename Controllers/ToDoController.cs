@@ -15,14 +15,17 @@ namespace TechYatraAPI.Controllers
         private readonly IToDoService _service;
         private readonly IGenericRepository<ToDo> _toDoService;
         private readonly SieveProcessor _sieveProcessor;
+        public readonly ILogger<ToDoController> _logger;
         public ToDoController(IToDoService service,
   
-            IGenericRepository<ToDo> toDoService, SieveProcessor sieveProcessor
+            IGenericRepository<ToDo> toDoService, SieveProcessor sieveProcessor,
+            ILogger<ToDoController> logger
             )
         {
             _service = service;
             _toDoService = toDoService;
             _sieveProcessor = sieveProcessor;
+            _logger = logger;
         }
         // GET: api/<ToDoController>
         [HttpGet]
@@ -30,15 +33,27 @@ namespace TechYatraAPI.Controllers
         {
             var tasks = _toDoService.GetAll().AsQueryable();
             tasks = _sieveProcessor.Apply(model, tasks);
+            _logger.LogInformation("Getting all tasks");
               return tasks.ToList();
         }
 
         // GET api/<ToDoController>/5
         [HttpGet("{id}")]
-        public ToDo Get(int id)
+        public IActionResult Get(int id)
         {
-            var result = _toDoService.GetById(id);
-            return result;
+            //try
+            //{
+                var result = _toDoService.GetById(id);
+                if (result == null)
+                    throw new Exception("Getting errors while fetching customer details");
+
+                return Ok(result);
+            //}
+            //catch(Exception ex)
+            //{
+               // _logger.LogError(ex.Message);
+               // return BadRequest("Internal server error");
+            //}
         }
 
         // POST api/<ToDoController>

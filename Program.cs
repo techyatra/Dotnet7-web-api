@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Sieve.Services;
 using TechYatraAPI.Context;
+using TechYatraAPI.CustomMiddleware;
 using TechYatraAPI.Interface;
 using TechYatraAPI.Service;
 using TechYatraAPI.Unit_Of_Work;
@@ -35,7 +36,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+//app.UseExceptionHandler("something went wrong");
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllers();
 
 app.Run();
+
